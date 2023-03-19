@@ -8,8 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10"]
 
+    #git@github.com:davidscmx/simple-waymo-open-dataset-reader.git
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -21,6 +22,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install 3rd party libraries
+      - uses: actions/checkout@v3
+        with:
+          name: davidscmx/simple-waymo-open-dataset-reader
+          ref: refs/heads/release
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
