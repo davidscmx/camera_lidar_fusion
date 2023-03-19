@@ -20,5 +20,5 @@ class ImportSimpleWaymoDatasetReader(TestCase):
         datafile = WaymoDataFileReader(self.test_tf_record)
         table = datafile.get_record_table()
         num_frames = len(table)
-        self.assertEqual(num_frames, )
+        self.assertEqual(num_frames, 2)
         datafile.file.close()
