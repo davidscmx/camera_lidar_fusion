@@ -28,7 +28,7 @@ jobs:
           repository: davidscmx/simple-waymo-open-dataset-reader
           path: 3rd_party
       - name: Install the Simple Waymo Open Dataset Reader
-          run: |
+        run: |
           cd 3rd_party
           python setup.py install
           cd ..
