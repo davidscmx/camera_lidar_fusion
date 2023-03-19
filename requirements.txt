@@ -10,3 +10,4 @@ matplotlib
 shapely
 tqdm
 open3d
+gitpython
