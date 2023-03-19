@@ -22,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Install 3rd party libraries
+      - name: Checkout the Simple Waymo Open Dataset Reader
       - uses: actions/checkout@v3
         with:
           name: davidscmx/simple-waymo-open-dataset-reader
