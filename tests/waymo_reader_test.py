@@ -5,7 +5,6 @@ from pathlib import Path
 from unittest import TestCase
 from simple_waymo_open_dataset_reader import WaymoDataFileReader
 
-
 class ImportSimpleWaymoDatasetReader(TestCase):
 
     def setUp(self):
@@ -14,11 +13,18 @@ class ImportSimpleWaymoDatasetReader(TestCase):
                   "_with_camera_labels_part0.tfrecord")
 
         git_repo = git.Repo("./", search_parent_directories=True)
-        self.test_tf_record = Path(git_repo.working_dir) / "waymo_data" / tf_rec
+        test_tf_record = Path(git_repo.working_dir) / "waymo_data" / tf_rec
+        
+        self.datafile = WaymoDataFileReader(test_tf_record)
 
     def test_count_frames(self):
-        datafile = WaymoDataFileReader(self.test_tf_record)
-        table = datafile.get_record_table()
+        table = self.datafile.get_record_table()
         num_frames = len(table)
         self.assertEqual(num_frames, 2)
-        datafile.file.close()
+
+    def test_getting_frame(self):        
+        frame = next(iter(self.datafile))
+        assert frame.context.stats.location == "location_phx"
+        
+    def tearDown(self):
+        self.datafile.file.close()
