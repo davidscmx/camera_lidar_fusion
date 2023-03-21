@@ -1,5 +1,4 @@
 
-
 import cv2
 import git
 import numpy as np
@@ -9,6 +8,7 @@ from pathlib import Path
 from data_loaders.camera_loader import CameraLoader
 from simple_waymo_open_dataset_reader import dataset_pb2
 from simple_waymo_open_dataset_reader import WaymoDataFileReader
+
 
 class TestCameraLoader(unittest.TestCase):
     def setUp(self):
@@ -20,7 +20,7 @@ class TestCameraLoader(unittest.TestCase):
 
         self.datafile = WaymoDataFileReader(test_tf_record)
 
-        self.frame = next(iter(self.datafile))        
+        self.frame = next(iter(self.datafile))
 
         self.cam_loader = CameraLoader()
         self.cam_loader.set_frame(self.frame)
