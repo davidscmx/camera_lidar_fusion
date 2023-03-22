@@ -57,7 +57,7 @@ class TestCameraLoader(unittest.TestCase):
 
     def test_decode_single_image(self):
         img = self.cam_loader.decode_single_image()
-        ref_img = "training_segment-10963653239323173269_1924_000_1944_000_with_camera_labels_front_camera.png"
+        ref_img = "training_segment-10963653239323173269_1924_000_1944_000_with_camera_labels_part0.png"
         ref_img_dir = Path("tests/reference_data")
         ref_img_path = ref_img_dir / ref_img
         assert ref_img_path.exists(), "Image not found"

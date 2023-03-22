@@ -6,8 +6,11 @@
 
 
 
+## Front camera image with top laser 3D labels
 
-# What are "Range Images"?
+<img src="media/range_image_explanation.png"/>
+
+## What are "Range Images"?
 They are an alternative way to represent lidar scans.
 This data structure holds 3d points as a 360 degree "photo" of the scanning environment with the row
 dimension denoting the elevation angle of the laser beam and the column dimension denoting the azimuth angle.
