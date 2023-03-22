@@ -8,7 +8,7 @@
 
 ## Front camera image with top laser 3D labels
 
-<img src="media/range_image_explanation.png"/>
+<img src="media/front_camera_with_laser_labels.png"/>
 
 ## What are "Range Images"?
 They are an alternative way to represent lidar scans.

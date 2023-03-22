@@ -5,6 +5,8 @@ import numpy as np
 from PIL import Image
 
 from simple_waymo_open_dataset_reader import dataset_pb2
+from simple_waymo_open_dataset_reader import utils as waymo_utils
+
 from easydict import EasyDict as edict
 
 class CameraLoader:
@@ -22,6 +24,9 @@ class CameraLoader:
 
     def set_selected_camera(self, camera_name):
         self.camera_name = camera_name
+
+    def get_camera_calibration(self):
+        return waymo_utils.get(self.frame.context.camera_calibrations, self.camera_name)
 
     def load_camera_data_structure(self) -> dataset_pb2.CameraImage:
         return [obj for obj in self.frame.images if obj.name == self.camera_name][0]
