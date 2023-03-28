@@ -20,3 +20,4 @@ class CameraVisualizer():
             waymo_utils.draw_3d_box(image_with_labels, self.vehicle_to_image, label, colour=(255, 0, 0))                          
         return image_with_labels
 
+    

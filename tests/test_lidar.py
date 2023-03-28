@@ -29,7 +29,7 @@ class TestCameraLoader(unittest.TestCase):
         self.assertEqual(self.lidar.calibration.extrinsic.transform[-5], 2.184)
 
     def test_compute_beam_inclinations(self):
-        beam_inclinations = array = self.lidar.compute_beam_inclinations()
+        beam_inclinations = self.lidar.compute_beam_inclinations()
         self.assertEqual(len(beam_inclinations.tolist()), 64)
         self.assertAlmostEqual(beam_inclinations[0], -0.30677331)
         self.assertAlmostEqual(beam_inclinations[-1], 0.04198772)

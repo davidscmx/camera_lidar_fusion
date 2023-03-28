@@ -1,0 +1,9 @@
+@startuml
+
+
+[Camera Loader]
+
+[Lidar Loader]
+
+
+@enduml
