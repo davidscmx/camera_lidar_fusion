@@ -5,6 +5,17 @@
 [![Python package](https://github.com/davidscmx/camera_lidar_fusion/actions/workflows/python.yml/badge.svg)](https://github.com/davidscmx/camera_lidar_fusion/actions/workflows/python.yml)
 
 
+## Range Image structure
+
+-- lasers ⇒ one branch for each entry in LaserName
+        |-- name (LaserName)
+        |-- ri_return1 (RangeImage class)
+            |-- range_image_compressed
+            |-- camera_projection_compressed
+            |-- range_image_pose_compressed
+            |-- range_image
+        |-- ri_return2 (same as ri_return1)
+
 
 ## Front camera image with top laser 3D labels
 

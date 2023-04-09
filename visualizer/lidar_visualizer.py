@@ -1,11 +1,17 @@
 
-from simple_waymo_open_dataset_reader import dataset_pb2
 
 from enum import Enum
 import numpy as np
+import open3d
+import time
 import cv2
-import matplotlib.pyplot as plt
 
+import matplotlib
+import matplotlib.cm
+matplotlib.use("cairo")
+
+from simple_waymo_open_dataset_reader import dataset_pb2
+from simple_waymo_open_dataset_reader import utils as waymo_utils
 
 class RangeImgChannel(Enum):
     Range = 0
@@ -17,6 +23,7 @@ class RangeImgChannel(Enum):
 class LidarVisualizer:
     def __init__(self, lidar):
         self.lidar = lidar
+        self.lidar_frame_counter = 0
 
     def crop_channel_azimuth(self, img_channel, division_factor):
         opening_angle = int(img_channel.shape[1] / division_factor)
@@ -58,3 +65,68 @@ class LidarVisualizer:
         constant = np.amax(img) / 2
         img = (constant * img * 255) / (np.amax(img) - np.amin(img))
         return img
+
+    def show_pcl(self, pcl, vis):
+        # TODO improve visualization
+        if not self.lidar_frame_counter:
+            vis.create_window()
+
+        pcd = open3d.geometry.PointCloud()
+
+        # Remove intensity channel
+        pcl = pcl[:, :-1]
+        pcd.points = open3d.utility.Vector3dVector(pcl)
+        open3d.visualization.draw_geometries([pcd])
+
+        if not self.lidar_frame_counter:
+            vis.add_geometry(pcd)
+        else:
+            vis.clear_geometries()
+            vis.update_geometry(pcd)
+
+        vis.poll_events()
+        vis.update_renderer()
+
+        time.sleep(2)
+        # TODO: Fix saving as dark image
+        vis.capture_screen_image(f"./media/depth_image_{self.lidar_frame_counter}.png")
+
+        vis.destroy_window()
+        self.lidar_frame_counter += 1
+
+    def display_laser_on_image(self, img, camera_calibration):
+
+        pcl, pcl_attr = self.lidar.project_to_pointcloud()
+        # get transformation matrix from vehicle frame to image
+        vehicle_to_image = waymo_utils.get_image_transform(camera_calibration)
+
+        # Convert the pointcloud to homogeneous coordinates.
+        pcl1 = np.concatenate((pcl, np.ones_like(pcl[:, 0:1])), axis=1)
+
+        # Transform the point cloud to image space.
+        proj_pcl = np.einsum('ij,bj->bi', vehicle_to_image, pcl1)
+
+        # Filter LIDAR points which are behind the camera.
+        mask = proj_pcl[:, 2] > 0
+        proj_pcl = proj_pcl[mask]
+        proj_pcl_attr = pcl_attr[mask]
+
+        # Project the point cloud onto the image.
+        proj_pcl = proj_pcl[:, :2]/proj_pcl[:, 2:3]
+
+        # Filter points which are outside the image.
+        mask = np.logical_and(
+            np.logical_and(proj_pcl[:, 0] > 0, proj_pcl[:, 0] < img.shape[1]),
+            np.logical_and(proj_pcl[:, 1] > 0, proj_pcl[:, 1] < img.shape[1]))
+
+        proj_pcl = proj_pcl[mask]
+        proj_pcl_attr = proj_pcl_attr[mask]
+
+        # Colour code the points based on distance.
+        cmap = matplotlib.cm.get_cmap("viridis")
+        coloured_intensity = 255 * cmap(proj_pcl_attr[:, 0]/30)
+
+        # Draw a circle for each point.
+        for i in range(proj_pcl.shape[0]):
+            cv2.circle(img, (int(proj_pcl[i, 0]), int(proj_pcl[i, 1])), 1, coloured_intensity[i])
+
