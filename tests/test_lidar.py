@@ -4,6 +4,7 @@ from pathlib import Path
 
 from sensors.lidar import Lidar
 from simple_waymo_open_dataset_reader import dataset_pb2
+from simple_waymo_open_dataset_reader import utils as waymo_utils
 from simple_waymo_open_dataset_reader import WaymoDataFileReader
 
 
@@ -29,10 +30,11 @@ class TestCameraLoader(unittest.TestCase):
         self.assertEqual(self.lidar.calibration.extrinsic.transform[-5], 2.184)
 
     def test_compute_beam_inclinations(self):
-        beam_inclinations = self.lidar.compute_beam_inclinations()
+        beam_inclinations = waymo_utils.compute_beam_inclinations(self.lidar.calibration,
+                                                                  self.lidar.range_image_height)
         self.assertEqual(len(beam_inclinations.tolist()), 64)
         self.assertAlmostEqual(beam_inclinations[0], -0.30677331)
         self.assertAlmostEqual(beam_inclinations[-1], 0.04198772)
-        
+
     def tearDown(self):
         self.datafile.file.close()
