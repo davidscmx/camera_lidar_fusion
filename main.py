@@ -9,6 +9,8 @@ from simple_waymo_open_dataset_reader import WaymoDataFileReader
 from data_loaders.camera_loader import CameraLoader
 
 from sensors.lidar import Lidar
+from sensors.pcl import Pcl
+
 from visualizer.cam_visualizer import CameraVisualizer
 from visualizer.lidar_visualizer import LidarVisualizer, RangeImgChannel
 
@@ -36,14 +38,18 @@ for cnt_frame in range(f_range.start, f_range.end):
     cam_viz = CameraVisualizer(img, frame.laser_labels,
                                cam_loader.get_camera_calibration())
 
-    #img = cam_viz.project_laser_labels_into_image()
     lidar.init_frame(frame, lidar.names.top)
+    pcl = Pcl(lidar.get_pcl_range_image())
+    lidar_viz.draw_1D_map(pcl.intensity_map, "intensity")
+    lidar_viz.draw_1D_map(pcl.height_map, "height")
+    lidar_viz.draw_1D_map(pcl.density_map, "density")
+
+    #img = cam_viz.project_laser_labels_into_image()
     #ri_range = lidar_viz.get_img_selected_channel(RangeImgChannel.Range)
     #ri_intensity = lidar_viz.get_img_selected_channel(RangeImgChannel.Intensity)
 
-    lidar_viz.display_laser_on_image(img, cam_loader.get_camera_calibration())
 
-    cv2.namedWindow("img", cv2.WINDOW_NORMAL)
-    cv2.imshow("img", img)
-    cv2.waitKey(0)
+    #cv2.namedWindow("img", cv2.WINDOW_NORMAL)
+    #cv2.imshow("img", img)
+    #cv2.waitKey(0)
 

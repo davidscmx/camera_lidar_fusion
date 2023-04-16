@@ -130,3 +130,11 @@ class LidarVisualizer:
         for i in range(proj_pcl.shape[0]):
             cv2.circle(img, (int(proj_pcl[i, 0]), int(proj_pcl[i, 1])), 1, coloured_intensity[i])
 
+    def draw_1D_map(self, custom_map, name):
+        custom_map = custom_map * 256
+        custom_map = custom_map.astype(np.uint8)
+        while (1):
+            cv2.imshow(name, custom_map)
+            if cv2.waitKey(10) & 0xFF == 27:
+                break
+        cv2.destroyAllWindows()
