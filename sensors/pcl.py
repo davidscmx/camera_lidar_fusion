@@ -131,6 +131,6 @@ class Pcl:
         bev_maps[0] = bev_map
 
         bev_maps = torch.from_numpy(bev_maps)  # create tensor from birds-eye view
-        input_bev_maps = bev_maps.to(configs.device, non_blocking=True).float()
+        input_bev_maps = bev_maps.to(torch.device('cpu'), non_blocking=True).float()
 
         return input_bev_maps
