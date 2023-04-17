@@ -115,13 +115,15 @@ class Pcl:
 
         return (pcl_x, pcl_y, pcl_z)
 
-    def assemble_bev_from_maps(density_map, intensity_map, height_map, configs):
+    @property
+    def assembled_bev_from_maps(self):
+
         # assemble 3-channel bev-map from individual maps
         bev_map = np.zeros((3, self.bev_height, self.bev_width))
 
-        bev_map[2, :, :] = density_map[:self.bev_height, :self.bev_width]  # r_map
-        bev_map[1, :, :] = height_map[:self.bev_height, :self.bev_width]  # g_map
-        bev_map[0, :, :] = intensity_map[:self.bev_height, :self.bev_width]  # b_map
+        bev_map[2, :, :] = self.density_map[:self.bev_height, :self.bev_width]    # r_map
+        bev_map[1, :, :] = self.height_map[:self.bev_height, :self.bev_width]     # g_map
+        bev_map[0, :, :] = self.intensity_map[:self.bev_height, :self.bev_width]  # b_map
 
         # expand dimension of bev_map before converting into a tensor
         s1, s2, s3 = bev_map.shape
