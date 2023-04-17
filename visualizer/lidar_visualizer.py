@@ -133,8 +133,15 @@ class LidarVisualizer:
     def draw_1D_map(self, custom_map, name):
         custom_map = custom_map * 256
         custom_map = custom_map.astype(np.uint8)
+        custom_map = cv2.rotate(custom_map, cv2.ROTATE_180)
         while (1):
             cv2.imshow(name, custom_map)
             if cv2.waitKey(10) & 0xFF == 27:
                 break
         cv2.destroyAllWindows()
+
+    def show_bev(self, bev_maps, height, width):
+        bev_map = (bev_maps.squeeze().permute(1, 2, 0).numpy() * 255).astype(np.uint8)
+        bev_map = cv2.resize(bev_map, (width, height))
+        bev_map = cv2.rotate(bev_map, cv2.ROTATE_180)
+        cv2.imshow('BEV map', bev_map)

@@ -44,6 +44,8 @@ for cnt_frame in range(f_range.start, f_range.end):
     lidar_viz.draw_1D_map(pcl.height_map, "height")
     lidar_viz.draw_1D_map(pcl.density_map, "density")
 
+
+    lidar_viz.show_bev(pcl.assembled_bev_from_maps, pcl.bev_height, pcl.bev_width)
     #img = cam_viz.project_laser_labels_into_image()
     #ri_range = lidar_viz.get_img_selected_channel(RangeImgChannel.Range)
     #ri_intensity = lidar_viz.get_img_selected_channel(RangeImgChannel.Intensity)
