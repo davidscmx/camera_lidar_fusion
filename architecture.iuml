@@ -1,0 +1,26 @@
+@startuml
+digraph architecture {
+
+    rankdir="LR";
+    node [shape=record, width=2.5, height=1.5, fontsize=12];
+    edge [arrowhead=vee, arrowsize=0.7, fontsize=12];
+
+    Start -> {LidarBlock CameraBlock};
+
+    Start [label="Start"];
+    LidarBlock [label="{Lidar}}"];
+    CameraBlock [label="{Camera}}"];
+    // comment
+    PclBlock [label="{PCL}"];
+    PclBevBlock [label="{PCL BEV}"];
+    ComplexYoloBlock [label="{Complex YOLO}"];
+    End [label="End"];
+
+    Start -> LidarBlock:0;
+    LidarBlock:1 -> PclBlock:0;
+    PclBlock:1 -> PclBevBlock:0;
+    PclBevBlock:1 -> ComplexYoloBlock:0;
+    ComplexYoloBlock:1 -> End;
+    End;
+}
+@enduml

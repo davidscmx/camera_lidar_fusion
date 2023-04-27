@@ -1,6 +1,6 @@
 
 
-class object_3d:    
+class Object3d:
     def __init__(self, label):
         self.type = label.type
         self.center_x = label.box.center_x
@@ -17,4 +17,4 @@ class LabelsLoader():
         self.labels_config = labels_config
         # convert_labels_into_objects
         self.labels = labels
-        self.objects_3d: list = [object_3d(label) for label in labels] 
+        self.objects_3d: list = [Object3d(label) for label in labels]

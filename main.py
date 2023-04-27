@@ -13,21 +13,25 @@ from sensors.pcl import Pcl
 
 from visualizer.cam_visualizer import CameraVisualizer
 from visualizer.lidar_visualizer import LidarVisualizer, RangeImgChannel
+from visualizer.multi_image_drawer import MultiImageDrawer
+from visualizer.bev_visualizer import BevVisualizer
 
 frame_range = namedtuple("frame_range", ["start", "end"])
 f_range = frame_range(0, 100)
 
 tf_rec = ("training_segment-10963653239323173269_1924_000_1944_000"
-          "_with_camera_labels_part0.tfrecord")
+          "_with_camera_labels.tfrecord")
 
 test_tf_record = Path("waymo_data") / tf_rec
 datafile = WaymoDataFileReader(test_tf_record)
-
 
 cam_loader = CameraLoader()
 lidar = Lidar()
 lidar_viz = LidarVisualizer(lidar)
 vis = open3d.visualization.VisualizerWithKeyCallback()
+
+
+
 
 for cnt_frame in range(f_range.start, f_range.end):
     frame = next(iter(datafile))
@@ -40,18 +44,25 @@ for cnt_frame in range(f_range.start, f_range.end):
 
     lidar.init_frame(frame, lidar.names.top)
     pcl = Pcl(lidar.get_pcl_range_image())
-    lidar_viz.draw_1D_map(pcl.intensity_map, "intensity")
-    lidar_viz.draw_1D_map(pcl.height_map, "height")
-    lidar_viz.draw_1D_map(pcl.density_map, "density")
 
-
-    lidar_viz.show_bev(pcl.assembled_bev_from_maps, pcl.bev_height, pcl.bev_width)
-    #img = cam_viz.project_laser_labels_into_image()
+    #lidar_viz.draw_1D_map(pcl.intensity_map, "intensity")
+    #lidar_viz.draw_1D_map(pcl.height_map, "height")
+    #lidar_viz.draw_1D_map(pcl.density_map, "density")
+#
+    #lidar_viz.show_bev(pcl.assembled_bev_from_maps, pcl.bev_height, pcl.bev_width)
+    #img_with_gt = cam_viz.project_laser_labels_into_image()
+    #print(img_with_gt.shape)
     #ri_range = lidar_viz.get_img_selected_channel(RangeImgChannel.Range)
     #ri_intensity = lidar_viz.get_img_selected_channel(RangeImgChannel.Intensity)
 
+    #images_dic = {}
+    #images_dic["pcl.intensity_map"] = pcl.intensity_map
+    #images_dic["pcl.height_map"] = pcl.height_map
+    #images_dic["pcl.density_map"] = pcl.density_map
+    #images_dic["pcl.assembled_bev"] = pcl.assembled_bev_from_maps
+    #images_dic["img_with_gt"] = img_with_gt
+#
+    #multi = MultiImageDrawer(images_dic)
 
-    #cv2.namedWindow("img", cv2.WINDOW_NORMAL)
-    #cv2.imshow("img", img)
-    #cv2.waitKey(0)
-
+    bev_viz = BevVisualizer(pcl.assembled_bev_from_maps, frame.laser_labels)
+    bev_viz.show_objects_in_bev()
