@@ -32,7 +32,6 @@ vis = open3d.visualization.VisualizerWithKeyCallback()
 
 
 
-
 for cnt_frame in range(f_range.start, f_range.end):
     frame = next(iter(datafile))
     cam_loader.set_frame(frame)

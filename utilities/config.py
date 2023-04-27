@@ -16,3 +16,8 @@ bev_config.height = 608
 det_config = edict()
 det_config.conf_thresh = 0.5
 det_config.model = 'darknet'
+
+obj_config = edict()
+obj_config.colors = [[0, 255, 255],  # 'Pedestrian': 0
+                     [0, 0, 255],    # 'Car': 1
+                     [255, 0, 0]]   # 'Cyclist': 2

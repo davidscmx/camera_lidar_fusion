@@ -4,13 +4,7 @@ import numpy as np
 import cv2
 
 from simple_waymo_open_dataset_reader import label_pb2
-from simple_waymo_open_dataset_reader import utils as waymo_utils
-from data_loaders.labels_loader import LabelsLoader
-from utilities.config import bev_config, lidar_config
-
-
-from dataclasses import dataclass
-
+from utilities.config import bev_config, lidar_config, obj_config
 
 class ObjectPixel:
     def __init__(self):
@@ -30,6 +24,7 @@ class Bev:
     def convert_from_metric_into_px_coords(self, object_3d):
         ob_3d = object_3d
         obj_px = ObjectPixel()
+        obj_px.id = ob_3d.type
 
         obj_px.x = (ob_3d.center_y - lidar_config.lim_y[0]) / \
                    (lidar_config.diff_y) * bev_config.width
@@ -50,6 +45,7 @@ class Bev:
         cos_yaw = np.cos(obj_px.yaw)
         sin_yaw = np.sin(obj_px.yaw)
 
+        bev_corners[0, 0] = obj_px.x - obj_px.w / 2 * cos_yaw - obj_px.l / 2 * sin_yaw  # front left
         bev_corners[0, 1] = obj_px.y - obj_px.w / 2 * sin_yaw + obj_px.l / 2 * cos_yaw
         bev_corners[1, 0] = obj_px.x - obj_px.w / 2 * cos_yaw + obj_px.l / 2 * sin_yaw  # rear left
         bev_corners[1, 1] = obj_px.y - obj_px.w / 2 * sin_yaw - obj_px.l / 2 * cos_yaw
@@ -61,13 +57,16 @@ class Bev:
         return bev_corners
 
     def project_detections_into_bev(self, bev_map, objects_3d, color=[]):
+
         for object_3d in objects_3d:
             # extract detection
+            if object_3d.type != label_pb2.Label.TYPE_VEHICLE:
+                continue
             obj_px = self.convert_from_metric_into_px_coords(object_3d)
 
             # draw object bounding box into birds-eye view
-            #if not color:
-            #    color = configs.obj_colors[int(obj_px.id)]
+            if not color:
+                color = obj_config.colors[int(obj_px.id)]
 
             bev_corners = self.get_object_corners_within_bev_image(obj_px)
 
