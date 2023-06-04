@@ -1,13 +1,13 @@
 
+import cv2
 import numpy as np
 import torch
 
 from utilities.config import lidar_config
 
-
-
 INTENSITY_DIM = 3
 HEIGHT_DIM = 2
+
 
 class Pcl:
     def __init__(self, pcl):
@@ -26,8 +26,6 @@ class Pcl:
                         (self.pcl[:, 2] >= self.lim_z[0]) & (self.pcl[:, 2] <= self.lim_z[1]))
 
         self.pcl = self.pcl[mask]
-
-
 
     def discretize_for_bev(self):
         # remove lidar points outside detection area and with too low reflectivity
@@ -64,6 +62,18 @@ class Pcl:
 
         return topsorted_pcl
 
+    def _get_1D_map(self, custom_map):
+        custom_map = custom_map * 255
+        custom_map = custom_map.astype(np.uint8)
+        custom_map = cv2.rotate(custom_map, cv2.ROTATE_180)
+
+        return custom_map
+
+    def _tile_gray_to_match_3D(self, img):
+        img = np.tile(img[..., np.newaxis], (1, 1, 3))
+        return img
+#
+
     @property
     def intensity_map(self):
         intensity_map = np.zeros((self.bev_height + 1, self.bev_width + 1))
@@ -75,6 +85,11 @@ class Pcl:
             top_sorted_z / (np.amax(top_sorted_z) - np.amin(top_sorted_z))
 
         return intensity_map
+
+    @property
+    def intensity_map_1d_map(self):
+        map = self._get_1D_map(self.intensity_map)
+        return self._tile_gray_to_match_3D(map)
 
     @property
     def height_map(self):
@@ -96,6 +111,11 @@ class Pcl:
         return height_map
 
     @property
+    def height_map_1d_map(self):
+        map = self._get_1D_map(self.height_map)
+        return self._tile_gray_to_match_3D(map)
+
+    @property
     def density_map(self):
         # Compute density layer of the BEV map
         density_map = np.zeros((self.bev_height + 1, self.bev_width + 1))
@@ -107,6 +127,11 @@ class Pcl:
         density_map[np.int_(top_sorted_x), np.int_(top_sorted_y)] = normalizedCounts
 
         return density_map
+
+    @property
+    def density_map_1d_map(self):
+        map = self._get_1D_map(self.density_map)
+        return self._tile_gray_to_match_3D(map)
 
     def _get_xyz_components(self, pcl):
         pcl_x = pcl[:, 0]

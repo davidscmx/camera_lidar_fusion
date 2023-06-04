@@ -6,6 +6,7 @@ import cv2
 from simple_waymo_open_dataset_reader import label_pb2
 from utilities.config import bev_config, lidar_config, obj_config
 
+
 class ObjectPixel:
     def __init__(self):
         id: int
